@@ -11,7 +11,6 @@
 	</div>
 </template>
 <script>
-// import {  } from "vue-demi";
 import AppLogin from "./AppLogin.vue";
 import UserPage from "./UserPage.vue";
 import UserProfile from "./UserProfile.vue";
