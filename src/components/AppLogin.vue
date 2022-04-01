@@ -13,11 +13,13 @@
 		</div>
 
 		<input v-model="email" placeholder="email" type="email" class="input" />
-		{{ email }}
 		<input v-model="password" type="password" placeholder="password" class="input" />
-
-		{{ password }}
-		<button>{{ newUser ? 'Sign up' : 'Sign in' }}</button>
+		<button
+			class="button is-info"
+			:class="{ 'is-loading': loading }"
+			@click="signInOrCreateUser()"
+		>{{ newUser ? 'Sign up' : 'Sign in' }}</button>
+		<p class="has-text-danger" v-if="errorMessage">{{ errorMessage }}</p>
 	</aside>
 </template>
 <script>
@@ -32,12 +34,37 @@ export default {
 		const email = ref('');
 		const password = ref('');
 		const newUser = ref(false);
+		const loading = ref(false);
+		const errorMessage = ref('');
+
+		async function signInOrCreateUser() {
+			this.loading = true;
+			this.errorMessage = '';
+
+			try {
+				if (this.newUser) {
+					await auth.createUserWithEmailAndPassword(this.email, this.password)
+				} else {
+					await auth.signInWithEmailAndPassword(this.email, this.password)
+				}
+			} catch (err) {
+				this.errorMessage = err?.message.split(':')[1].split('(')[0].trim();
+				console.log(err.message);
+			}
+
+			this.loading = false;
+		}
+
 		return {
 			newUser,
 			auth,
 			email,
 			password,
+			signInOrCreateUser,
+			loading,
+			errorMessage,
 		}
-	}
+	},
+
 };
 </script>
